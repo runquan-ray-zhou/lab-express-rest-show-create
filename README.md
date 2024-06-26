@@ -154,7 +154,7 @@ Add a new folder called `v2` - In version 2, instead of sending JSON, you'll be 
 - inside of the `v2` folder make a new `controllers` folder
   - inside of the `controllers` folder add `logsController.js`
 - in `app.js` set up the new controllers so that the route will be `/v2/logs`
-- write some logic to display the index data embedded in an unordered list of anchor tags linking to the show routes at `/v2/logs/:index`
+- write some logic to display the index data embedded in an unordered list of anchor tags linking to the show routes at `/v2/logs/:id`
 - write some logic to display the show data as an `h1` tag for the title, a `p` tag for the post, and additional styling for the other fields. Create a back button that takes users back to `/v2/logs`
 - This code likely is becoming rather tough to maintain. You can look into setting up a template engine like [ejs](https://ejs.co/) or creating a create-react-app front end and connecting it to the main API `/logs` not `/v2/logs` - **NOTE:** we'll learn how to connect a create-react-app in a later lesson.
 
