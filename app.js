@@ -36,6 +36,18 @@ app.post("/logs", (req, res) => {
     res.json(logsArray[logsArray.length - 1]);
   });
 
+// Delete route
+app.delete("/logs/:id", (req, res) => {
+    const { id } = req.params;
+    const deletedLogIndex = logsArray.findIndex((log) => log.id === Number(id));
+    if (deletedLogIndex !== -1) {
+      const deletedLog = logsArray.splice(deletedLogIndex, 1);
+      res.redirect("/logs")
+    } else {
+      res.redirect("/*");
+    }
+  });
+
 // 404 Page not found
 app.get("*", (req, res) => {
     res.status(404).json({ error: "Sorry, no page found" });
