@@ -5,6 +5,9 @@ const logsArray = require("./models/log.js");
 // Configuration
 const app = express();
 
+// Middleware
+app.use(express.json());
+
 // Health Check Route
 app.get("/", (req, res) => {
     res.send("welcome to the captain's log")
@@ -24,6 +27,13 @@ app.get("/logs/:id", (req, res) => {
     } else {
       res.redirect("/*");
     }
+  });
+
+// Create route
+app.post("/logs", (req, res) => {
+    const newLog = {...req.body}
+    logsArray.push(newLog);
+    res.json(logsArray[logsArray.length - 1]);
   });
 
 // 404 Page not found
