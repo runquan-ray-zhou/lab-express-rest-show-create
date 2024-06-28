@@ -1,6 +1,5 @@
 // Dependencies
 const express = require("express");
-const logs = express.Router();
 const logsArray = require("./models/log.js");
 
 // Configuration
@@ -15,6 +14,17 @@ app.get("/", (req, res) => {
 app.get("/logs", (req, res) => {
     res.json(logsArray)
 })
+
+// Show route
+app.get("/logs/:id", (req, res) => {
+    const { id } = req.params;
+    const log = logsArray.find((log, index) => index === Number(id))
+    if (log) {
+      res.send(log);
+    } else {
+      res.redirect("/*");
+    }
+  });
 
 // 404 Page not found
 app.get("*", (req, res) => {
