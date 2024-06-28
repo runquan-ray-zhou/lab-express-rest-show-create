@@ -6,7 +6,7 @@ const app = express();
 
 // Health Check Route
 app.get("/", (req, res) => {
-    res.send("Hello, world!")
+    res.send(`Captain's Log - ${Date()}`)
 })
 
 // 404 Page not found
