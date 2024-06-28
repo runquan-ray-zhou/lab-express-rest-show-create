@@ -1,12 +1,19 @@
 // Dependencies
 const express = require("express");
+const logs = express.Router();
+const logsArray = require("./models/log.js");
 
 // Configuration
 const app = express();
 
 // Health Check Route
 app.get("/", (req, res) => {
-    res.send(`Captain's Log - ${Date()}`)
+    res.send("welcome to the captain's log")
+})
+
+// Index route
+app.get("/logs", (req, res) => {
+    res.json(logsArray)
 })
 
 // 404 Page not found
