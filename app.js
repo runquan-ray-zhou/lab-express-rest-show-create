@@ -1,6 +1,7 @@
 // Dependencies
 const express = require("express");
 const logsArray = require("./models/log.js");
+const log = require("./models/log.js");
 
 // Configuration
 const app = express();
@@ -13,9 +14,57 @@ app.get("/", (req, res) => {
     res.send("welcome to the captain's log")
 })
 
-// Index route
+// // Index route
+// app.get("/logs", (req, res) => {
+//     res.json(logsArray)
+// })
+
+// Bonus route
 app.get("/logs", (req, res) => {
+  console.log(req.query)
+  let returnArray;
+  if (Object.hasOwn(req.query,"order")) {
+    switch(req.query.order) {
+      case "asc":
+      returnArray = [...logsArray].sort((a, b) => a.captainName.localeCompare(b.captainName))
+      break;
+      case "desc":
+      returnArray = [...logsArray].sort((a, b) => b.captainName.localeCompare(a.captainName))
+      break;
+      default:
+      returnArray = [...logsArray]
+    }
+    res.json(returnArray)
+  } else if (Object.hasOwn(req.query,"mistakes")){
+    switch(req.query.mistakes) {
+      case "true":
+      returnArray = [...logsArray].filter((log) => log.mistakesWereMadeToday === true)
+      break;
+      case "false":
+      returnArray = [...logsArray].filter((log) => log.mistakesWereMadeToday === false)
+      break;
+      default:
+      returnArray = [...logsArray]
+    }
+    res.json(returnArray)
+  } else if (Object.hasOwn(req.query,"lastCrisis")){
+    switch(req.query.lastCrisis) {
+      case "gt10":
+      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis > 10)
+      break;
+      case "gte20":
+      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis >= 20)
+      break;
+      case "lte5":
+      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis <= 5)
+      break;
+      default:
+      returnArray = [...logsArray]
+    }
+    res.json(returnArray)
+  } else {
     res.json(logsArray)
+  }
 })
 
 // Show route
