@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Part 2 Bonus Validation Checker
+// Part 2 Bonus Validation Checkers
 const checkForCaptainName = (req, res, next) => {
   if (typeof req.body.captainName === "string") {
     return next();
@@ -17,18 +17,52 @@ const checkForCaptainName = (req, res, next) => {
   }
 }
 
+const checkForTitle = (req, res, next) => {
+  if (typeof req.body.title === "string") {
+    return next();
+  } else {
+    res.send("The title must be a string type!")
+  }
+}
+
+const checkForPost = (req, res, next) => {
+  if (typeof req.body.post === "string") {
+    return next();
+  } else {
+    res.send("The post must be a string type!")
+  }
+}
+
+const checkForMistakesWereMadeToday = (req, res, next) => {
+  if (typeof req.body.mistakesWereMadeToday === "boolean") {
+    return next();
+  } else {
+    res.send("The mistakesWereMadeToday must be a boolean type!")
+  }
+}
+
+// const checkForDaysSinceLastCrisis = (req, res, next) => {
+//   if (typeof req.body.daysSinceLastCrisis === "number") {
+//     return next();
+//   } else {
+//     res.send("The daysSinceLastCrisis must be a number type!")
+//   }
+// }
+
+
+
 
 // Health Check Route
 app.get("/", (req, res) => {
     res.send("welcome to the captain's log")
 })
 
-// // Index route
+// // Index Route
 // app.get("/logs", (req, res) => {
 //     res.json(logArray)
 // })
 
-// Part 1 Bonus route
+// Part 1 Bonus Route
 app.get("/logs", (req, res) => {
   console.log(req.query)
   let returnArray;
@@ -76,7 +110,7 @@ app.get("/logs", (req, res) => {
   }
 })
 
-// Show route
+// Show Route
 app.get("/logs/:id", (req, res) => {
     const { id } = req.params;
     const log = logArray.find((log, index) => index === Number(id))
@@ -87,14 +121,16 @@ app.get("/logs/:id", (req, res) => {
     }
   });
 
-// Create route
-app.post("/logs", checkForCaptainName, (req, res) => {
+// Create Route
+app.post("/logs", checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
+  //checkForDaysSinceLastCrisis, 
+  (req, res) => {
     const currentLog = {...req.body}
     logArray.push(currentLog);
     res.json(logArray[logArray.length - 1]);
   });
 
-// Delete route
+// Delete Route
 app.delete("/logs/:id", (req, res) => {
     const { id } = req.params;
     const deletedLogIndex = logArray.findIndex((log) => log.id === Number(id));
@@ -106,7 +142,7 @@ app.delete("/logs/:id", (req, res) => {
     }
   });
 
-// Update route
+// Update Route
 app.put("/:id", (req, res) => {
     const { id } = req.params;
     const logToUpdateIndex = logArray.findIndex((log) => log.id === Number(id));
@@ -118,7 +154,7 @@ app.put("/:id", (req, res) => {
     }
   });
 
-// 404 Page not found
+// 404 Page Not Found
 app.get("*", (req, res) => {
     res.status(404).json({ error: "Sorry, no page found" });
 });
