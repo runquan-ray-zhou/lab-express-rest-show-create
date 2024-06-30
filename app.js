@@ -145,7 +145,9 @@ app.delete("/logs/:id", (req, res) => {
   });
 
 // Update Route
-app.put("/:id", (req, res) => {
+app.put("/:id", checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
+  //checkForDaysSinceLastCrisis, 
+  (req, res) => {
     const { id } = req.params;
     const logToUpdateIndex = logArray.findIndex((log) => log.id === Number(id));
     if (logToUpdateIndex !== -1) {
