@@ -49,8 +49,10 @@ const checkForMistakesWereMadeToday = (req, res, next) => {
 //   }
 // }
 
+// Controllers
+const logsController = require("./v2/controllers/logsController.js")
 
-
+app.use("/v2/logs", logsController)
 
 // Health Check Route
 app.get("/", (req, res) => {
