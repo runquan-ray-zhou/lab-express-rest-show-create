@@ -1,13 +1,22 @@
 // Dependencies
 const express = require("express");
-const logsArray = require("./models/log.js");
-const log = require("./models/log.js");
+const logArray = require("./models/log.js");
 
 // Configuration
 const app = express();
 
 // Middleware
 app.use(express.json());
+
+// Part 2 Bonus Validation Checker
+const checkForCaptainName = (req, res, next) => {
+  if (typeof req.body.captainName === "string") {
+    return next();
+  } else {
+    res.send("The captain's name must be a string type!")
+  }
+}
+
 
 // Health Check Route
 app.get("/", (req, res) => {
@@ -16,61 +25,61 @@ app.get("/", (req, res) => {
 
 // // Index route
 // app.get("/logs", (req, res) => {
-//     res.json(logsArray)
+//     res.json(logArray)
 // })
 
-// Bonus route
+// Part 1 Bonus route
 app.get("/logs", (req, res) => {
   console.log(req.query)
   let returnArray;
   if (Object.hasOwn(req.query,"order")) {
     switch(req.query.order) {
       case "asc":
-      returnArray = [...logsArray].sort((a, b) => a.captainName.localeCompare(b.captainName))
+      returnArray = [...logArray].sort((a, b) => a.captainName.localeCompare(b.captainName))
       break;
       case "desc":
-      returnArray = [...logsArray].sort((a, b) => b.captainName.localeCompare(a.captainName))
+      returnArray = [...logArray].sort((a, b) => b.captainName.localeCompare(a.captainName))
       break;
       default:
-      returnArray = [...logsArray]
+      returnArray = [...logArray]
     }
     res.json(returnArray)
   } else if (Object.hasOwn(req.query,"mistakes")){
     switch(req.query.mistakes) {
       case "true":
-      returnArray = [...logsArray].filter((log) => log.mistakesWereMadeToday === true)
+      returnArray = [...logArray].filter((log) => log.mistakesWereMadeToday === true)
       break;
       case "false":
-      returnArray = [...logsArray].filter((log) => log.mistakesWereMadeToday === false)
+      returnArray = [...logArray].filter((log) => log.mistakesWereMadeToday === false)
       break;
       default:
-      returnArray = [...logsArray]
+      returnArray = [...logArray]
     }
     res.json(returnArray)
   } else if (Object.hasOwn(req.query,"lastCrisis")){
     switch(req.query.lastCrisis) {
       case "gt10":
-      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis > 10)
+      returnArray = [...logArray].filter((log) => log.daysSinceLastCrisis > 10)
       break;
       case "gte20":
-      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis >= 20)
+      returnArray = [...logArray].filter((log) => log.daysSinceLastCrisis >= 20)
       break;
       case "lte5":
-      returnArray = [...logsArray].filter((log) => log.daysSinceLastCrisis <= 5)
+      returnArray = [...logArray].filter((log) => log.daysSinceLastCrisis <= 5)
       break;
       default:
-      returnArray = [...logsArray]
+      returnArray = [...logArray]
     }
     res.json(returnArray)
   } else {
-    res.json(logsArray)
+    res.json(logArray)
   }
 })
 
 // Show route
 app.get("/logs/:id", (req, res) => {
     const { id } = req.params;
-    const log = logsArray.find((log, index) => index === Number(id))
+    const log = logArray.find((log, index) => index === Number(id))
     if (log) {
       res.send(log);
     } else {
@@ -79,18 +88,18 @@ app.get("/logs/:id", (req, res) => {
   });
 
 // Create route
-app.post("/logs", (req, res) => {
-    const newLog = {...req.body}
-    logsArray.push(newLog);
-    res.json(logsArray[logsArray.length - 1]);
+app.post("/logs", checkForCaptainName, (req, res) => {
+    const currentLog = {...req.body}
+    logArray.push(currentLog);
+    res.json(logArray[logArray.length - 1]);
   });
 
 // Delete route
 app.delete("/logs/:id", (req, res) => {
     const { id } = req.params;
-    const deletedLogIndex = logsArray.findIndex((log) => log.id === Number(id));
+    const deletedLogIndex = logArray.findIndex((log) => log.id === Number(id));
     if (deletedLogIndex !== -1) {
-      const deletedLog = logsArray.splice(deletedLogIndex, 1);
+      const deletedLog = logArray.splice(deletedLogIndex, 1);
       res.redirect("/logs")
     } else {
       res.redirect("/*");
@@ -100,10 +109,10 @@ app.delete("/logs/:id", (req, res) => {
 // Update route
 app.put("/:id", (req, res) => {
     const { id } = req.params;
-    const logToUpdateIndex = logsArray.findIndex((log) => log.id === Number(id));
+    const logToUpdateIndex = logArray.findIndex((log) => log.id === Number(id));
     if (logToUpdateIndex !== -1) {
-      logsArray[logToUpdateIndex] = {...logsArray[logToUpdateIndex], ...req.body};
-      res.status(200).json(logsArray[logToUpdateIndex]);
+      logArray[logToUpdateIndex] = {...logArray[logToUpdateIndex], ...req.body};
+      res.status(200).json(logArray[logToUpdateIndex]);
     } else {
       res.redirect("/*");
     }
