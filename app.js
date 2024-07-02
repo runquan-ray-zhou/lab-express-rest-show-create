@@ -1,5 +1,6 @@
 // Dependencies
 const express = require("express");
+const cors = require("cors")
 const logArray = require("./models/log.js");
 
 // Configuration
@@ -7,6 +8,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
+app.use((req, res, next) => {
+  console.log(req.method, req.headers.host, req.path);
+  return next();
+});
 
 // Part 2 Bonus Validation Checkers
 const checkForCaptainName = (req, res, next) => {
@@ -115,19 +121,23 @@ app.get("/logs", (req, res) => {
 // Show Route
 app.get("/logs/:id", (req, res) => {
     const { id } = req.params;
-    const log = logArray.find((log, index) => index === Number(id))
+    const log = logArray.find((log) => log.id === Number(id))
+    // const log = logArray.find((log, index) => index === Number(id))
     if (log) {
       res.send(log);
     } else {
-      res.redirect("/*");
+      // res.redirect("/*");
+      res.send("Cannot find any logs with this id: " + id);
     }
   });
 
 // Create Route
-app.post("/logs", checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
+app.post("/logs", 
+  // checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
   //checkForDaysSinceLastCrisis, 
   (req, res) => {
-    const currentLog = {...req.body}
+    // const currentLog = {...req.body}
+    const currentLog = {id: logArray.length + 1, ...req.body}
     logArray.push(currentLog);
     res.json(logArray[logArray.length - 1]);
   });
@@ -140,12 +150,13 @@ app.delete("/logs/:id", (req, res) => {
       const deletedLog = logArray.splice(deletedLogIndex, 1);
       res.redirect("/logs")
     } else {
-      res.redirect("/*");
+      res.redirect("/error/*");
     }
   });
 
 // Update Route
-app.put("/:id", checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
+app.put("/logs/:id",
+  //checkForCaptainName, checkForTitle, checkForPost, checkForMistakesWereMadeToday, 
   //checkForDaysSinceLastCrisis, 
   (req, res) => {
     const { id } = req.params;
@@ -154,7 +165,7 @@ app.put("/:id", checkForCaptainName, checkForTitle, checkForPost, checkForMistak
       logArray[logToUpdateIndex] = {...logArray[logToUpdateIndex], ...req.body};
       res.status(200).json(logArray[logToUpdateIndex]);
     } else {
-      res.redirect("/*");
+      res.redirect("/error/*");
     }
   });
 
